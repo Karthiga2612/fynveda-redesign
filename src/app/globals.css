@@ -1,16 +1,23 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --surface: #f7f7f6;
-  --foreground: #171717;
-  --muted-foreground: #6b7280;
-  --border: #e5e5e5;
-  --accent: #2563eb;
+  /* Warm editorial paper + near-black ink */
+  --background: #faf8f4;
+  --surface: #f2ede3;
+  --foreground: #17151f;
+  --muted-foreground: #6b6478;
+  --border: #e4ddd0;
+
+  /* Purple family — brand accent, not a background color */
+  --accent: #4c3b8c; /* muted royal purple */
+  --accent-deep: #241b3f; /* deep indigo/violet */
+  --accent-soft: #d9d0f0; /* soft lavender */
+  --accent-mist: #efeaf8; /* pale lavender field */
+  --gold: #a9822f; /* warm asset accent, used sparingly */
 
   --container-width: 1200px;
   --radius: 12px;
-  --shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  --shadow: 0 4px 24px rgba(23, 21, 31, 0.06);
 
   --space-section: 6rem;
   --space-container-x: 1.5rem;
@@ -23,18 +30,23 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
   --color-accent: var(--accent);
+  --color-accent-deep: var(--accent-deep);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-mist: var(--accent-mist);
+  --color-gold: var(--gold);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-fraunces);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --surface: #141414;
-    --foreground: #ededed;
-    --muted-foreground: #9ca3af;
-    --border: #262626;
-  }
+/*
+ * This design is a warm-paper editorial palette by intent — dark surfaces
+ * were never part of the brief, and inverting these tokens for
+ * prefers-color-scheme muddies the light/ink contrast the whole hero is
+ * built on. Keep a single, deliberate light theme regardless of OS setting.
+ */
+:root {
+  color-scheme: light;
 }
 
 html {
@@ -53,4 +65,29 @@ body {
   max-width: var(--container-width);
   margin-inline: auto;
   padding-inline: var(--space-container-x);
+}
+
+.font-display {
+  font-family: var(--font-display), ui-serif, Georgia, serif;
+}
+
+@keyframes fv-nav-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fv-nav-animate {
+  animation: fv-nav-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fv-nav-animate {
+    animation: none;
+  }
 }
