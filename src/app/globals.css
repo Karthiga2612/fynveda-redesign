@@ -91,3 +91,30 @@ body {
     animation: none;
   }
 }
+
+/*
+ * Hero entrance — pre-hidden baseline.
+ *
+ * GSAP hides individual elements on mount (gsap.set) before playing them
+ * in, but that JS runs only after hydration. On a slower load, the
+ * browser paints the server-rendered HTML — fully assembled — first,
+ * then GSAP snaps it to hidden a beat later before replaying the reveal.
+ * That snap-then-replay is the "glitch" on refresh.
+ *
+ * Rather than replicate every element's hidden value in CSS (which was
+ * tried here previously — it silently fought several elements' existing
+ * `-translate-x-1/2 -translate-y-1/2` centering transform, permanently
+ * offsetting them once GSAP took over, since GSAP never clears CSS
+ * properties it didn't set), the whole hero root simply stays invisible
+ * until GSAP has finished arranging every child's hidden starting state,
+ * then reveals itself in one step. Individual elements are never touched
+ * by CSS — only by GSAP — so there's nothing for the two to conflict over.
+ *
+ * Scoped to prefers-reduced-motion: no-preference so a reduced-motion
+ * user (or one whose JS fails to load) always sees the finished layout.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .fv-hero-veil {
+    opacity: 0;
+  }
+}

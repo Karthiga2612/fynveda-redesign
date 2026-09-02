@@ -143,6 +143,7 @@ export default function Hero() {
         const badge = root.querySelector("[data-hero-badge]");
 
         if (reduce) {
+          gsap.set(root, { opacity: 1 });
           gsap.set(
             [eyebrow, lines, desc, cta, core, tokens, nodes, badge],
             { clearProps: "all", opacity: 1, x: 0, y: 0, scale: 1 }
@@ -164,6 +165,12 @@ export default function Hero() {
           const dir = (el.dataset.enter as Direction) || "top";
           gsap.set(el, { autoAlpha: 0, scale: 0.78, ...ENTER_OFFSET[dir] });
         });
+
+        // Every child now has its correct hidden starting state — safe to
+        // lift the veil. This is the only thing that reveals the hero, so
+        // there's no window where the assembled, not-yet-hidden layout
+        // (or a later snap into the hidden state) is visible.
+        gsap.set(root, { opacity: 1 });
 
         // ---- entrance timeline: the system assembles itself ----
         const tl = gsap.timeline({
@@ -344,7 +351,7 @@ export default function Hero() {
       tone="base"
       className="relative overflow-hidden py-14 md:py-20 lg:flex lg:min-h-[calc(100vh-4rem)] lg:items-center lg:py-0"
     >
-      <div ref={rootRef} className="relative w-full">
+      <div ref={rootRef} className="fv-hero-veil relative w-full">
         {/* ============ LAYERED BACKGROUND ============ */}
         <div className="pointer-events-none absolute inset-0 -z-30" aria-hidden="true">
           {/* faint ledger rules — a financial document brought to life */}
