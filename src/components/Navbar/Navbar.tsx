@@ -6,7 +6,6 @@ import { useState } from "react";
 const NAV_LINKS = [
   { label: "Why Fyn Veda", href: "#why-fyn-veda" },
   { label: "Real Net Worth", href: "#real-net-worth" },
-  { label: "Wealth View", href: "#wealth-view" },
   { label: "Wealth Growth", href: "#wealth-growth" },
   { label: "Technology", href: "#technology" },
   { label: "Advisory", href: "#advisory" },

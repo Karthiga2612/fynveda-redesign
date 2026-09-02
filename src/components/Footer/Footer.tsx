@@ -1,7 +1,6 @@
 const FOOTER_LINKS = [
   { label: "Why Fyn Veda", href: "#why-fyn-veda" },
   { label: "Real Net Worth", href: "#real-net-worth" },
-  { label: "Wealth View", href: "#wealth-view" },
   { label: "Wealth Growth", href: "#wealth-growth" },
   { label: "Technology", href: "#technology" },
   { label: "Advisory", href: "#advisory" },
@@ -45,6 +44,10 @@ export default function Footer() {
 
         <div className="mt-12 border-t border-border pt-8">
           <p className="text-sm text-muted-foreground">© {year} Fyn Veda.</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Fyn Veda is a wealth visibility platform, not an investment
+            adviser.
+          </p>
         </div>
       </div>
     </footer>

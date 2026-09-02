@@ -25,8 +25,8 @@ const ASSET_CATEGORIES = [
 const LIABILITIES = { label: "Liabilities", value: "−₹18,60,000" };
 
 const TRUST_INDICATORS = [
-  { label: "Complete wealth view", href: "#wealth-view" },
-  { label: "Wealth growth tracking", href: "#wealth-growth" },
+  { label: "Complete wealth view", href: "#real-net-worth" },
+  { label: "Wealth growth timeline", href: "#wealth-growth" },
   { label: "CA-backed advisory", href: "#advisory" },
 ];
 
@@ -414,26 +414,21 @@ export default function Hero() {
               data-hero-eyebrow
               className="inline-flex items-center gap-2 rounded-full border border-accent/25 bg-background/80 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.14em] text-accent"
             >
-              Personal Wealth Operating System
+              India&apos;s first Personal Wealth Operating System
             </span>
 
             <h1 className="font-display max-w-xl text-5xl font-medium leading-[1.08] tracking-tight text-foreground sm:text-6xl lg:text-[4.25rem]">
               <span className="block overflow-hidden pb-1">
                 <span data-hero-line className="block">
-                  Your complete
+                  What is your
                 </span>
               </span>
-              <span className="block overflow-hidden pb-1">
+              <span className="block overflow-hidden">
                 <span
                   data-hero-line
                   className="block italic text-accent"
                 >
-                  financial reality
-                </span>
-              </span>
-              <span className="block overflow-hidden">
-                <span data-hero-line className="block">
-                  in one place.
+                  real net worth?
                 </span>
               </span>
             </h1>
@@ -442,26 +437,35 @@ export default function Hero() {
               data-hero-desc
               className="max-w-md text-lg leading-relaxed text-muted-foreground"
             >
-              Fyn Veda brings together everything you own, control and owe
-              — assets, investments, liabilities and ownership — into one
-              clear picture of your wealth.
+              You know your bank balance, your salary, your portfolio and
+              your loan outstanding. Fyn Veda connects all of it into one
+              continuously updated view of your financial reality.
             </p>
 
             <div data-hero-cta className="flex flex-col gap-5">
-              <a
-                ref={ctaRef}
-                href="#cta"
-                data-magnetic
-                className="group inline-flex w-fit items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-medium text-white transition-shadow duration-200 hover:shadow-lg"
-              >
-                Get Started
-                <span
-                  className="transition-transform duration-200 group-hover:translate-x-0.5"
-                  aria-hidden="true"
+              <div className="flex flex-wrap items-center gap-3">
+                <a
+                  ref={ctaRef}
+                  href="#cta"
+                  data-magnetic
+                  className="group inline-flex w-fit items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-medium text-white transition-shadow duration-200 hover:shadow-lg"
                 >
-                  →
-                </span>
-              </a>
+                  Get Started
+                  <span
+                    className="transition-transform duration-200 group-hover:translate-x-0.5"
+                    aria-hidden="true"
+                  >
+                    →
+                  </span>
+                </a>
+
+                <a
+                  href="#real-net-worth"
+                  className="inline-flex w-fit items-center gap-2 rounded-full border border-border px-6 py-3 text-sm font-medium text-foreground transition-colors duration-200 hover:border-accent/40 hover:text-accent"
+                >
+                  How it works
+                </a>
+              </div>
 
               <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
                 {TRUST_INDICATORS.map((item) => (
