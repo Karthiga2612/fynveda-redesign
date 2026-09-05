@@ -138,7 +138,7 @@ export default function Comparison() {
   return (
     <section
       id="comparison"
-      className="border-l-4 border-halo/20 bg-ink pl-5 text-halo xl:border-l-0 xl:pl-24"
+      className="border-l-4 border-halo/20 pl-5 text-halo xl:border-l-0 xl:pl-24"
       style={{ scrollMarginTop: "80px" }}
     >
       <div className="container py-14 md:py-20 lg:py-24">

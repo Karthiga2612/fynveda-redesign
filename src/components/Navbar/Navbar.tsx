@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 
 const LINKS = [
-  { href: "#how-it-works", label: "How it works" },
-  { href: "#real-net-worth", label: "Real net worth" },
-  { href: "#for-cas", label: "For CAs" },
+  { href: "#data-flow", label: "How it works" },
+  { href: "#statement", label: "Real net worth" },
+  { href: "#advisors", label: "For CAs" },
 ];
 
 export default function Navbar() {

@@ -8,6 +8,8 @@ import WealthGrowth from "@/sections/WealthGrowth";
 import DataFlow from "@/sections/DataFlow";
 import Advisors from "@/sections/Advisors";
 import Comparison from "@/sections/Comparison";
+import EarlyAccess from "@/sections/EarlyAccess";
+import Footer from "@/sections/Footer";
 
 export default function Home() {
   return (
@@ -22,6 +24,8 @@ export default function Home() {
       <DataFlow />
       <Advisors />
       <Comparison />
+      <EarlyAccess />
+      <Footer />
     </main>
   );
 }
