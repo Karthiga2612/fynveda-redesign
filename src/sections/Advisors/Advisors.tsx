@@ -129,7 +129,7 @@ export default function Advisors() {
         type="button"
         {...handlers}
         aria-pressed={selectedKey === stageKey}
-        className="flex w-full cursor-pointer flex-col items-start rounded-lg border-0 -m-3 p-3 text-left transition-all duration-[350ms] ease-out"
+        className="relative flex w-full cursor-pointer flex-col items-start rounded-lg border-0 -m-3 p-3 text-left transition-all duration-[350ms] ease-out"
         style={{
           opacity: isDimmed ? 0.45 : 1,
           background: isActive ? "rgba(109,74,224,0.07)" : "transparent",
@@ -180,17 +180,18 @@ export default function Advisors() {
         </div>
 
         <div
-          className="grid w-full transition-[grid-template-rows] duration-[350ms] ease-out"
-          style={{ gridTemplateRows: isActive ? "1fr" : "0fr" }}
+          className="pointer-events-none absolute left-3 right-3 top-full transition-all duration-[350ms] ease-out"
+          style={{
+            opacity: isActive ? 1 : 0,
+            transform: isActive ? "translateY(0)" : "translateY(-4px)",
+          }}
         >
-          <div className="overflow-hidden">
-            <p
-              className="mt-3 max-w-[30ch] text-[13px] leading-snug"
-              style={{ color: "var(--iris)" }}
-            >
-              {stage.detail}
-            </p>
-          </div>
+          <p
+            className="max-w-[30ch] pt-3 text-[13px] leading-snug"
+            style={{ color: "var(--iris)" }}
+          >
+            {stage.detail}
+          </p>
         </div>
       </button>
     );

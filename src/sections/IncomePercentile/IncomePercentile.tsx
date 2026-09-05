@@ -149,7 +149,7 @@ export default function IncomePercentile() {
                 transition: "opacity 500ms ease-out 90ms, transform 500ms ease-out 90ms",
               }}
             >
-              <p className="text-[15px] font-medium text-shade">Annual income</p>
+              <p className="text-[15px] font-medium" style={{ color: "var(--halo)", opacity: 0.55 }}>Annual income</p>
 
               <div className="relative mt-6">
                 <input
@@ -171,9 +171,9 @@ export default function IncomePercentile() {
                 />
               </div>
 
-              <div className="mt-3 flex items-center justify-between text-[13px] text-shade">
+              <div className="mt-3 flex items-center justify-between text-[13px]" style={{ color: "var(--halo)", opacity: 0.55 }}>
                 <span>₹3L</span>
-                <span className="tabular font-medium text-halo">{formatLakhShort(income)}</span>
+                <span className="tabular font-medium text-halo" style={{ opacity: 1 }}>{formatLakhShort(income)}</span>
                 <span>₹50L+</span>
               </div>
 
@@ -187,7 +187,7 @@ export default function IncomePercentile() {
               className="mt-10 max-w-[46ch] lg:mt-12"
               style={{ animation: visible ? "line-in 420ms ease-out both" : undefined }}
             >
-              <p className="text-[17px] leading-[1.6] text-shade">{COPY[band]}</p>
+              <p className="text-[17px] leading-[1.6]" style={{ color: "var(--halo)", opacity: 0.7 }}>{COPY[band]}</p>
             </div>
           </div>
 
@@ -219,12 +219,12 @@ export default function IncomePercentile() {
                         >
                           <a.icon
                             className="h-4 w-4"
-                            style={{ color: a.highlight ? "var(--iris)" : "var(--shade)" }}
+                            style={{ color: a.highlight ? "var(--iris)" : "var(--halo)", opacity: a.highlight ? 1 : 0.55 }}
                           />
                         </span>
                         <span
                           className="text-[15px]"
-                          style={{ color: a.highlight ? "var(--halo)" : "var(--shade)" }}
+                          style={{ color: "var(--halo)", opacity: a.highlight ? 1 : 0.6 }}
                         >
                           {a.label}
                         </span>
@@ -240,7 +240,7 @@ export default function IncomePercentile() {
                       </span>
                     </div>
                     {a.highlight && (
-                      <p className="mt-1.5 pl-11 text-[13px] text-shade">
+                      <p className="mt-1.5 pl-11 text-[13px]" style={{ color: "var(--halo)", opacity: 0.6 }}>
                         Grows into your net worth over time.
                       </p>
                     )}
@@ -260,7 +260,8 @@ export default function IncomePercentile() {
                     )}
                     <span
                       style={{
-                        color: i === FLOW_STAGES.length - 1 ? "var(--iris)" : "var(--shade)",
+                        color: i === FLOW_STAGES.length - 1 ? "var(--iris)" : "var(--halo)",
+                        opacity: i === FLOW_STAGES.length - 1 ? 1 : 0.55,
                         fontWeight: i === FLOW_STAGES.length - 1 ? 500 : 400,
                       }}
                     >
