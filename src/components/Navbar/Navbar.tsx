@@ -1,88 +1,58 @@
 "use client";
 
-import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const NAV_LINKS = [
-  { label: "Why Fyn Veda", href: "#why-fyn-veda" },
-  { label: "Real Net Worth", href: "#real-net-worth" },
-  { label: "Wealth Growth", href: "#wealth-growth" },
-  { label: "Technology", href: "#technology" },
-  { label: "Advisory", href: "#advisory" },
+const LINKS = [
+  { href: "#how-it-works", label: "How it works" },
+  { href: "#real-net-worth", label: "Real net worth" },
+  { href: "#for-cas", label: "For CAs" },
 ];
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [solid, setSolid] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setSolid(window.scrollY > 60);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <header className="fv-nav-animate sticky top-0 z-50 border-b border-border bg-background/80 shadow-sm backdrop-blur">
-      <nav className="container flex h-16 items-center justify-between md:h-18">
-        <Link
-          href="/"
-          className="text-lg font-semibold tracking-tight text-foreground transition-opacity duration-200 hover:opacity-80"
+    <header
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+        solid
+          ? "bg-paper-strong/80 backdrop-blur-md border-b border-rule-light shadow-[0_1px_0_0_rgba(21,14,46,0.04)]"
+          : "bg-transparent"
+      }`}
+    >
+      <nav className="mx-auto flex max-w-[1240px] items-center justify-between px-6 py-5">
+        <a
+          href="#"
+          className="flex items-center gap-2 font-display text-[21px] font-medium tracking-[-0.01em] text-ink"
         >
-          Fyn Veda
-        </Link>
-
+          <span className="inline-block h-2 w-2 bg-iris" />
+          FynVeda
+        </a>
         <ul className="hidden items-center gap-8 md:flex">
-          {NAV_LINKS.map((link) => (
+          {LINKS.map((link) => (
             <li key={link.href}>
               <a
                 href={link.href}
-                className="group relative text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
+                className="relative font-sans text-[15px] font-medium text-ink-soft transition-colors hover:text-iris focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-iris after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-iris after:transition-all after:duration-300 hover:after:w-full"
               >
                 {link.label}
-                <span className="absolute -bottom-1 left-0 h-px w-0 bg-accent transition-all duration-300 group-hover:w-full" />
               </a>
             </li>
           ))}
         </ul>
-
         <a
-          href="#cta"
-          className="hidden items-center justify-center rounded-full bg-accent px-5 py-2 text-sm font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:opacity-90 md:inline-flex"
+          href="#early-access"
+          className="inline-flex items-center justify-center rounded-[8px] bg-iris px-5 py-2.5 font-sans text-[15px] font-medium text-white transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-iris"
         >
-          Get Started
+          Get early access
         </a>
-
-        <button
-          type="button"
-          onClick={() => setIsOpen((open) => !open)}
-          aria-expanded={isOpen}
-          aria-controls="mobile-menu"
-          className="inline-flex items-center justify-center rounded-full border border-border p-2 text-foreground transition-colors duration-200 hover:bg-surface md:hidden"
-        >
-          <span className="sr-only">Toggle menu</span>
-          {isOpen ? "✕" : "☰"}
-        </button>
       </nav>
-
-      {isOpen && (
-        <div id="mobile-menu" className="border-t border-border md:hidden">
-          <ul className="container flex flex-col gap-4 py-4">
-            {NAV_LINKS.map((link) => (
-              <li key={link.href}>
-                <a
-                  href={link.href}
-                  onClick={() => setIsOpen(false)}
-                  className="block text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
-            <li>
-              <a
-                href="#cta"
-                onClick={() => setIsOpen(false)}
-                className="inline-flex w-full items-center justify-center rounded-full bg-accent px-5 py-2 text-sm font-medium text-white transition-all duration-200 hover:opacity-90"
-              >
-                Get Started
-              </a>
-            </li>
-          </ul>
-        </div>
-      )}
     </header>
   );
 }

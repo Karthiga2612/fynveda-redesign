@@ -1,120 +1,126 @@
 @import "tailwindcss";
 
 :root {
-  /* Warm editorial paper + near-black ink */
-  --background: #faf8f4;
-  --surface: #f2ede3;
-  --foreground: #17151f;
-  --muted-foreground: #6b6478;
-  --border: #e4ddd0;
+  /* Design tokens — fynveda-landing-layout.md §0 Color */
+  --ink: #150e2e;
+  --ink-raised: #1e1540;
+  --vellum: #f3effa;
+  --iris: #6d4ae0;
+  --halo: #b49cff;
+  --shade: #4a4166;
+  --mint: #5cd6a9;
+  --rule-on-dark: rgba(180, 156, 255, 0.18);
+  --rule-on-light: rgba(21, 14, 46, 0.12);
 
-  /* Purple family — brand accent, not a background color */
-  --accent: #4c3b8c; /* muted royal purple */
-  --accent-deep: #241b3f; /* deep indigo/violet */
-  --accent-soft: #d9d0f0; /* soft lavender */
-  --accent-mist: #efeaf8; /* pale lavender field */
-  --gold: #a9822f; /* warm asset accent, used sparingly */
+  /* Light-vellum sections (Hero, IncomePercentile) */
+  --ink-soft: #6b6478;
+  --paper-strong: #ffffff;
+  --rule-light: rgba(21, 14, 46, 0.12);
 
-  --container-width: 1200px;
-  --radius: 12px;
-  --shadow: 0 4px 24px rgba(23, 21, 31, 0.06);
-
-  --space-section: 6rem;
-  --space-container-x: 1.5rem;
+  --radius-control: 2px;
+  --container-width: 1240px;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-surface: var(--surface);
-  --color-foreground: var(--foreground);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-border: var(--border);
-  --color-accent: var(--accent);
-  --color-accent-deep: var(--accent-deep);
-  --color-accent-soft: var(--accent-soft);
-  --color-accent-mist: var(--accent-mist);
-  --color-gold: var(--gold);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-ink: var(--ink);
+  --color-ink-raised: var(--ink-raised);
+  --color-vellum: var(--vellum);
+  --color-iris: var(--iris);
+  --color-halo: var(--halo);
+  --color-shade: var(--shade);
+  --color-mint: var(--mint);
+  --color-ink-soft: var(--ink-soft);
+  --color-paper-strong: var(--paper-strong);
+  --color-rule-light: var(--rule-light);
   --font-display: var(--font-fraunces);
+  --font-sans: var(--font-satoshi);
 }
 
-/*
- * This design is a warm-paper editorial palette by intent — dark surfaces
- * were never part of the brief, and inverting these tokens for
- * prefers-color-scheme muddies the light/ink contrast the whole hero is
- * built on. Keep a single, deliberate light theme regardless of OS setting.
- */
 :root {
-  color-scheme: light;
-}
-
-html {
-  scroll-behavior: smooth;
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--ink);
+  color: var(--halo);
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  line-height: 1.5;
-}
-
-.container {
-  width: 100%;
-  max-width: var(--container-width);
-  margin-inline: auto;
-  padding-inline: var(--space-container-x);
+  line-height: 1.6;
+  font-size: 17px;
 }
 
 .font-display {
   font-family: var(--font-display), ui-serif, Georgia, serif;
 }
 
-@keyframes fv-nav-in {
+.container {
+  width: 100%;
+  max-width: var(--container-width);
+  margin-inline: auto;
+  padding-inline: 24px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--halo);
+  outline-offset: 2px;
+}
+
+/* ---- Light-vellum sections: dot grid + live range slider ---- */
+
+.bg-dot-grid {
+  background-image: radial-gradient(var(--ink) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.range-ledger {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--track-fill, var(--rule-light));
+  outline: none;
+  cursor: pointer;
+}
+.range-ledger::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--thumb-color, var(--iris));
+  border: 2px solid var(--paper-strong);
+  box-shadow: 0 0 0 1px var(--thumb-color, var(--iris));
+  cursor: pointer;
+}
+.range-ledger::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--track-fill, var(--rule-light));
+}
+.range-ledger::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--thumb-color, var(--iris));
+  border: 2px solid var(--paper-strong);
+  cursor: pointer;
+}
+.range-ledger:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+.range-ledger:focus-visible {
+  outline: 2px solid var(--halo);
+  outline-offset: 3px;
+}
+
+@keyframes line-in {
   from {
     opacity: 0;
-    transform: translateY(-0.75rem);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-.fv-nav-animate {
-  animation: fv-nav-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .fv-nav-animate {
-    animation: none;
-  }
-}
-
-/*
- * Hero entrance — pre-hidden baseline.
- *
- * GSAP hides individual elements on mount (gsap.set) before playing them
- * in, but that JS runs only after hydration. On a slower load, the
- * browser paints the server-rendered HTML — fully assembled — first,
- * then GSAP snaps it to hidden a beat later before replaying the reveal.
- * That snap-then-replay is the "glitch" on refresh.
- *
- * Rather than replicate every element's hidden value in CSS (which was
- * tried here previously — it silently fought several elements' existing
- * `-translate-x-1/2 -translate-y-1/2` centering transform, permanently
- * offsetting them once GSAP took over, since GSAP never clears CSS
- * properties it didn't set), the whole hero root simply stays invisible
- * until GSAP has finished arranging every child's hidden starting state,
- * then reveals itself in one step. Individual elements are never touched
- * by CSS — only by GSAP — so there's nothing for the two to conflict over.
- *
- * Scoped to prefers-reduced-motion: no-preference so a reduced-motion
- * user (or one whose JS fails to load) always sees the finished layout.
- */
-@media (prefers-reduced-motion: no-preference) {
-  .fv-hero-veil {
-    opacity: 0;
   }
 }
