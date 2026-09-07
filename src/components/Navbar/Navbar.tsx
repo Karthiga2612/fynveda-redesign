@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 const LINKS = [
-  { href: "#data-flow", label: "How it works" },
-  { href: "#statement", label: "Real net worth" },
-  { href: "#advisors", label: "For CAs" },
+  { href: "/#data-flow", label: "How it works" },
+  { href: "/#statement", label: "Real net worth" },
+  { href: "/#advisors", label: "For CAs" },
+  { href: "/blog", label: "Blog" },
 ];
 
 export default function Navbar() {
@@ -27,31 +29,31 @@ export default function Navbar() {
       }`}
     >
       <nav className="mx-auto flex max-w-[1240px] items-center justify-between px-6 py-5">
-        <a
-          href="#"
+        <Link
+          href="/"
           className="flex items-center gap-2 font-display text-[21px] font-medium tracking-[-0.01em] text-ink"
         >
           <span className="inline-block h-2 w-2 bg-iris" />
           FynVeda
-        </a>
+        </Link>
         <ul className="hidden items-center gap-8 md:flex">
           {LINKS.map((link) => (
             <li key={link.href}>
-              <a
+              <Link
                 href={link.href}
                 className="relative font-sans text-[15px] font-medium text-ink-soft transition-colors hover:text-iris focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-iris after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-iris after:transition-all after:duration-300 hover:after:w-full"
               >
                 {link.label}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
-        <a
-          href="#early-access"
+        <Link
+          href="/#early-access"
           className="inline-flex items-center justify-center rounded-[8px] bg-iris px-5 py-2.5 font-sans text-[15px] font-medium text-white transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-iris"
         >
           Get early access
-        </a>
+        </Link>
       </nav>
     </header>
   );

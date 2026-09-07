@@ -1,29 +1,32 @@
+import Link from "next/link";
+
 const YEAR = new Date().getFullYear();
 
 const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
   {
     title: "Product",
     links: [
-      { label: "How it works", href: "#data-flow" },
-      { label: "Real net worth", href: "#statement" },
-      { label: "For CAs", href: "#advisors" },
-      { label: "Get early access", href: "#early-access" },
+      { label: "How it works", href: "/#data-flow" },
+      { label: "Real net worth", href: "/#statement" },
+      { label: "For CAs", href: "/#advisors" },
+      { label: "Get early access", href: "/#early-access" },
+      { label: "Blog", href: "/blog" },
     ],
   },
   {
     title: "Company",
     links: [
-      { label: "About", href: "#belief" },
-      { label: "Careers", href: "#early-access" },
-      { label: "Contact", href: "#early-access" },
+      { label: "About", href: "/#belief" },
+      { label: "Careers", href: "/#early-access" },
+      { label: "Contact", href: "/#early-access" },
     ],
   },
   {
     title: "Legal",
     links: [
-      { label: "Privacy policy", href: "#data-flow" },
-      { label: "Terms of service", href: "#footer-compliance" },
-      { label: "Disclosures", href: "#footer-compliance" },
+      { label: "Privacy policy", href: "/#data-flow" },
+      { label: "Terms of service", href: "/#footer-compliance" },
+      { label: "Disclosures", href: "/#footer-compliance" },
     ],
   },
 ];
@@ -47,10 +50,10 @@ export default function Footer() {
           style={{ borderBottom: "1px solid var(--rule-on-dark)" }}
         >
           <div>
-            <a href="#" className="flex items-center gap-2 font-display text-[21px] font-medium text-halo" style={{ letterSpacing: "-0.01em" }}>
+            <Link href="/" className="flex items-center gap-2 font-display text-[21px] font-medium text-halo" style={{ letterSpacing: "-0.01em" }}>
               <span className="inline-block h-2 w-2 bg-iris" aria-hidden="true" />
               FynVeda
-            </a>
+            </Link>
             <p className="mt-4 max-w-[32ch] text-[14px] leading-snug" style={{ color: "var(--shade)" }}>
               A single source of financial truth — for everything you own,
               owe, and control.
@@ -65,13 +68,13 @@ export default function Footer() {
               <ul className="mt-4 flex flex-col gap-3">
                 {column.links.map((link) => (
                   <li key={link.label}>
-                    <a
+                    <Link
                       href={link.href}
                       className="text-[14px] text-halo transition-colors duration-200 hover:text-iris"
                       style={{ opacity: 0.85 }}
                     >
                       {link.label}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>

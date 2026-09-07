@@ -2,7 +2,7 @@
 
 import { useLayoutEffect, useEffect, useRef, type SVGProps } from "react";
 import gsap from "gsap";
-import { formatInr } from "@/lib/format";
+import { formatINR } from "@/lib/format";
 
 // Illustrative figures (§5 Open questions #1 — not drawn from a real
 // anonymised profile).
@@ -68,9 +68,9 @@ export default function Hero() {
         });
         ROWS.forEach((row) => {
           const el = figureRefs.current[row.key];
-          if (el) el.textContent = formatInr(row.value);
+          if (el) el.textContent = formatINR(row.value);
         });
-        if (totalRef.current) totalRef.current.textContent = formatInr(NET_WORTH);
+        if (totalRef.current) totalRef.current.textContent = formatINR(NET_WORTH);
         return;
       }
 
@@ -81,7 +81,7 @@ export default function Hero() {
           duration,
           ease: "power2.out",
           onUpdate: () => {
-            if (el) el.textContent = formatInr(counter.value);
+            if (el) el.textContent = formatINR(counter.value);
           },
         });
       }
@@ -93,9 +93,9 @@ export default function Hero() {
       gsap.set(note, { autoAlpha: 0 });
       ROWS.forEach((row) => {
         const el = figureRefs.current[row.key];
-        if (el) el.textContent = formatInr(0);
+        if (el) el.textContent = formatINR(0);
       });
-      if (totalRef.current) totalRef.current.textContent = formatInr(0);
+      if (totalRef.current) totalRef.current.textContent = formatINR(0);
 
       gsap.set(root, { opacity: 1 });
 
@@ -118,20 +118,18 @@ export default function Hero() {
   }, []);
 
   return (
-    <section id="hero" className="relative overflow-hidden bg-vellum">
+    <section
+      id="hero"
+      className="relative overflow-hidden border-l-4 pl-5 bg-vellum xl:border-l-0 xl:pl-24"
+      style={{ borderColor: "var(--rule-on-light)" }}
+    >
       <div
         ref={rootRef}
         className="container relative flex min-h-screen flex-col justify-center gap-12 pt-32 pb-20 opacity-0 lg:pt-24"
       >
-        {/* persistent left rail */}
-        <div className="pointer-events-none absolute bottom-20 left-0 top-32 hidden w-6 lg:block" aria-hidden="true">
-          <span className="font-sans text-[13px] font-medium tabular-nums text-iris">01</span>
-          <div className="absolute bottom-2 left-1 top-9 w-px bg-rule-light" />
-          <span className="absolute bottom-0 left-[1px] h-1.5 w-1.5 -translate-x-1/2 bg-iris" />
-        </div>
-        <span className="font-sans text-[13px] font-medium tabular-nums text-iris lg:hidden">01</span>
+        <span className="tabular mb-2 block text-[13px] font-medium text-iris xl:hidden">01</span>
 
-        <div className="grid gap-16 lg:grid-cols-2 lg:gap-16 lg:pl-10">
+        <div className="grid gap-16 lg:grid-cols-2 lg:gap-16">
           {/* ============ copy column ============ */}
           <div className="flex flex-col items-start gap-6">
             <span
@@ -167,7 +165,7 @@ export default function Hero() {
                 <span aria-hidden="true">→</span>
               </a>
               <a
-                href="#how-it-works"
+                href="#data-flow"
                 className="group inline-flex items-center gap-2.5 font-sans text-[15px] font-medium text-ink transition-opacity hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-iris"
               >
                 <span className="flex h-8 w-8 items-center justify-center rounded-full border border-iris text-iris">
@@ -180,14 +178,14 @@ export default function Hero() {
 
           {/* ============ statement card ============ */}
           <div className="relative">
-            <div className="relative rounded-[18px] border border-rule-light bg-paper-strong p-7 shadow-[0_30px_60px_-30px_rgba(76,59,140,0.30)] sm:p-8">
-              <span className="absolute -right-3 -top-3 rotate-[10deg] rounded-full border border-iris bg-paper-strong px-2.5 py-1 font-sans text-[11px] font-medium text-iris">
-                LIVE
-              </span>
-
-              <div className="flex items-baseline justify-between">
-                <span className="font-sans text-[12px] font-medium uppercase tracking-[0.06em] text-ink-soft">
+            <div className="rounded-[14px] border border-rule-light bg-paper-strong p-7 sm:p-8">
+              <div className="flex items-center justify-between">
+                <span className="inline-flex items-center gap-2 font-sans text-[12px] font-medium uppercase tracking-[0.06em] text-ink-soft">
                   Statement
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-iris px-2 py-0.5 text-[10px] font-medium normal-case tracking-normal text-iris">
+                    <span className="h-1 w-1 rounded-full bg-iris" />
+                    Live
+                  </span>
                 </span>
                 <span className="font-sans text-[13px] text-ink-soft">As of today</span>
               </div>
@@ -210,7 +208,7 @@ export default function Hero() {
                         figureRefs.current[row.key] = el;
                       }}
                     >
-                      {formatInr(0)}
+                      {formatINR(0)}
                     </span>
                   </span>
                 </div>
@@ -226,7 +224,7 @@ export default function Hero() {
                   className="font-display text-[40px] leading-none tabular-nums text-iris sm:text-[44px]"
                   style={{ letterSpacing: "-0.02em" }}
                 >
-                  <span ref={totalRef}>{formatInr(0)}</span>
+                  <span ref={totalRef}>{formatINR(0)}</span>
                 </p>
               </div>
 

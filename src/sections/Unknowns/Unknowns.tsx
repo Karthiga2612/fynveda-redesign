@@ -79,16 +79,33 @@ const QUESTIONS: {
   },
 ];
 
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value));
+}
+
+const PIN_SCROLL_DISTANCE = 1300; // px of extra scroll runway reserved for the pinned scrub, lg+ only
+
 /**
- * The problem, felt rather than listed. Hovering, focusing or tapping a
- * question calmly reveals its answer in the panel on the right — a
- * single quiet financial-insight readout, not a per-row redaction or a
- * dashboard widget.
+ * The problem, felt rather than listed. On lg+ screens the whole section
+ * pins in place (a sticky inner wrapper inside a taller outer one — same
+ * trick as the "Income tells you where you stand" section below) for a
+ * fixed scroll distance: while pinned, scroll position maps continuously
+ * to a question index, so the right-hand panel plays through the answers
+ * one by one before the page releases and continues scrolling. Below lg
+ * there's no reserved scroll runway to pin against, so it falls back to
+ * the gentler transit-based progress tied to the section's own
+ * scroll-through. Hovering or focusing a question still previews its
+ * answer immediately, overriding the scroll-linked one for as long as
+ * the pointer/focus stays there.
  */
 export default function Unknowns() {
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [scrollIndex, setScrollIndex] = useState(0);
   const [visible, setVisible] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const pinRef = useRef<HTMLDivElement>(null);
+
+  const activeIndex = hoveredIndex ?? scrollIndex;
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -111,7 +128,43 @@ export default function Unknowns() {
     return () => observer.disconnect();
   }, []);
 
-  const active = activeIndex !== null ? QUESTIONS[activeIndex] : null;
+  useEffect(() => {
+    const el = pinRef.current;
+    if (!el) return;
+    let frame = 0;
+
+    function update() {
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const isPinned = window.innerWidth >= 1024; // matches the lg: breakpoint driving the sticky pin
+      let progress: number;
+      if (isPinned) {
+        const scrollable = rect.height - window.innerHeight;
+        progress = scrollable > 0 ? clamp(-rect.top / scrollable, 0, 1) : 0;
+      } else {
+        const total = rect.height + window.innerHeight;
+        progress = clamp((window.innerHeight - rect.top) / total, 0, 1);
+      }
+      const idx = clamp(Math.floor(progress * QUESTIONS.length), 0, QUESTIONS.length - 1);
+      setScrollIndex(idx);
+    }
+
+    function onScroll() {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(update);
+    }
+
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+
+  const active = QUESTIONS[activeIndex];
 
   return (
     <section
@@ -131,12 +184,14 @@ export default function Unknowns() {
         }
       `}</style>
 
-      <div ref={sectionRef} className="container py-14 md:py-20 lg:py-24">
-        <span className="tabular mb-6 block text-[13px] font-medium text-iris xl:hidden">
-          02
-        </span>
+      <div ref={pinRef} className="lg:h-[calc(100vh+1300px)]">
+        <div className="lg:sticky lg:top-20">
+          <div ref={sectionRef} className="container py-14 md:py-20 lg:py-24">
+            <span className="tabular mb-6 block text-[13px] font-medium text-iris xl:hidden">
+              02
+            </span>
 
-        <div className="grid gap-16 lg:grid-cols-[7fr_5fr] lg:gap-12">
+            <div className="grid gap-16 lg:grid-cols-[7fr_5fr] lg:gap-12">
           {/* ============ questions column ============ */}
           <div>
             <h2
@@ -154,10 +209,10 @@ export default function Unknowns() {
                   <button
                     key={q.question}
                     type="button"
-                    onMouseEnter={() => setActiveIndex(i)}
-                    onMouseLeave={() => setActiveIndex((prev) => (prev === i ? null : prev))}
-                    onFocus={() => setActiveIndex(i)}
-                    onBlur={() => setActiveIndex((prev) => (prev === i ? null : prev))}
+                    onMouseEnter={() => setHoveredIndex(i)}
+                    onMouseLeave={() => setHoveredIndex((prev) => (prev === i ? null : prev))}
+                    onFocus={() => setHoveredIndex(i)}
+                    onBlur={() => setHoveredIndex((prev) => (prev === i ? null : prev))}
                     aria-expanded={isActive}
                     className="block w-full cursor-pointer py-6 text-left transition-all duration-500 ease-out"
                     style={{
@@ -232,81 +287,59 @@ export default function Unknowns() {
                 className="mb-8 h-px transition-all duration-300"
                 style={{
                   background: "linear-gradient(to right, var(--iris), transparent)",
-                  width: active ? "2.5rem" : "0rem",
-                  opacity: active ? 1 : 0,
+                  width: "2.5rem",
                 }}
                 aria-hidden="true"
               />
 
-              <div key={activeIndex ?? "idle"} style={{ animation: "unknowns-answer-in 320ms ease-out" }}>
-                {active ? (
-                  <div>
-                    <p
-                      className="text-[13px] font-medium uppercase"
-                      style={{ color: "var(--iris)", letterSpacing: "0.04em" }}
-                    >
-                      {active.label}
-                    </p>
-                    <p
-                      className="font-display tabular mt-3 text-[44px] leading-none lg:text-[52px]"
-                      style={{ color: "var(--iris)", letterSpacing: "-0.02em" }}
-                    >
-                      {active.value}
-                    </p>
+              <div key={activeIndex} style={{ animation: "unknowns-answer-in 320ms ease-out" }}>
+                <div>
+                  <p
+                    className="text-[13px] font-medium uppercase"
+                    style={{ color: "var(--iris)", letterSpacing: "0.04em" }}
+                  >
+                    {active.label}
+                  </p>
+                  <p
+                    className="font-display tabular mt-3 text-[44px] leading-none lg:text-[52px]"
+                    style={{ color: "var(--iris)", letterSpacing: "-0.02em" }}
+                  >
+                    {active.value}
+                  </p>
 
-                    <div className="mt-6" style={{ borderTop: `1px solid ${PALETTE.hairline}` }}>
-                      {active.points.map((point) => (
-                        <div
-                          key={point.label}
-                          className="flex items-baseline justify-between gap-4 py-2.5"
-                          style={{ borderBottom: `1px solid ${PALETTE.hairline}` }}
+                  <div className="mt-6" style={{ borderTop: `1px solid ${PALETTE.hairline}` }}>
+                    {active.points.map((point) => (
+                      <div
+                        key={point.label}
+                        className="flex items-baseline justify-between gap-4 py-2.5"
+                        style={{ borderBottom: `1px solid ${PALETTE.hairline}` }}
+                      >
+                        <span className="text-[13px]" style={{ color: PALETTE.textSecondary }}>
+                          {point.label}
+                        </span>
+                        <span
+                          className="tabular text-[13px] font-medium"
+                          style={{ color: PALETTE.textPrimary }}
                         >
-                          <span className="text-[13px]" style={{ color: PALETTE.textSecondary }}>
-                            {point.label}
-                          </span>
-                          <span
-                            className="tabular text-[13px] font-medium"
-                            style={{ color: PALETTE.textPrimary }}
-                          >
-                            {point.value}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
+                          {point.value}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
 
-                    <p
-                      className="mt-5 max-w-[32ch] text-[14px] leading-snug"
-                      style={{ color: PALETTE.textSecondary }}
-                    >
-                      {active.insight}
-                    </p>
-                  </div>
-                ) : (
-                  <div>
-                    <p
-                      className="text-[13px] font-medium uppercase"
-                      style={{ color: PALETTE.textSecondary, letterSpacing: "0.04em" }}
-                    >
-                      The full picture
-                    </p>
-                    <p
-                      className="font-display mt-3 text-[44px] leading-none lg:text-[52px]"
-                      style={{ color: PALETTE.textSecondary, opacity: 0.4 }}
-                    >
-                      —
-                    </p>
-                    <p
-                      className="mt-4 max-w-[30ch] text-[14px] italic leading-snug"
-                      style={{ color: PALETTE.textSecondary }}
-                    >
-                      Hover a question to see what it&apos;s really asking.
-                    </p>
-                  </div>
-                )}
+                  <p
+                    className="mt-5 max-w-[32ch] text-[14px] leading-snug"
+                    style={{ color: PALETTE.textSecondary }}
+                  >
+                    {active.insight}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
+      </div>
       </div>
     </section>
   );

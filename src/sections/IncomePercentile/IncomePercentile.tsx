@@ -67,6 +67,10 @@ const ALLOCATIONS: {
 
 const FLOW_STAGES = ["Income", "Save / Invest", "Assets", "Wealth"];
 
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value));
+}
+
 /**
  * The page's second interactive moment. A single slider carries the
  * whole argument: move it, and the percentile — and the sentence
@@ -77,11 +81,32 @@ const FLOW_STAGES = ["Income", "Save / Invest", "Assets", "Wealth"];
  * Still --ink (dark) — the spec marks section 03 as where the ink→vellum
  * transition happens at the *bottom* edge, so 03 itself stays dark,
  * matching 01/02.
+ *
+ * Same scroll-linked pattern as the "Unknowns" section above: while the
+ * user isn't touching the slider, scrolling through the section scrubs
+ * the income from ₹3L to ₹50L+ on its own. Dragging or keyboard-focusing
+ * the slider takes manual control for as long as that interaction lasts,
+ * then hands back to the scroll position — same as hover overriding the
+ * scroll-linked answer in section 02.
+ *
+ * On lg+ screens the whole section pins in place (a sticky inner wrapper
+ * inside a taller outer one, the same trick the "Where your income goes"
+ * panel already used for itself) for a fixed scroll distance, so the
+ * scrub has room to play out before the page continues scrolling. Below
+ * lg there's no extra scroll runway to spend on a pin, so it falls back
+ * to the gentler transit-based scrub tied to the section's own natural
+ * scroll-through.
  */
+const PIN_SCROLL_DISTANCE = 1300; // px of extra scroll runway reserved for the pinned scrub, lg+ only
+
 export default function IncomePercentile() {
-  const [income, setIncome] = useState(DEFAULT_INCOME);
+  const [scrollIncome, setScrollIncome] = useState(DEFAULT_INCOME);
+  const [dragIncome, setDragIncome] = useState(DEFAULT_INCOME);
+  const [isDragging, setIsDragging] = useState(false);
+  const income = isDragging ? dragIncome : scrollIncome;
   const [visible, setVisible] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const pinRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -104,6 +129,58 @@ export default function IncomePercentile() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const el = pinRef.current;
+    if (!el) return;
+    let frame = 0;
+
+    function update() {
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const isPinned = window.innerWidth >= 1024; // matches the lg: breakpoint driving the sticky pin
+      let progress: number;
+      if (isPinned) {
+        // The outer wrapper is deliberately taller than the viewport
+        // (see PIN_SCROLL_DISTANCE) so this overflow maps cleanly to the
+        // pinned scrub distance.
+        const scrollable = rect.height - window.innerHeight;
+        progress = scrollable > 0 ? clamp(-rect.top / scrollable, 0, 1) : 0;
+      } else {
+        // No pin below lg — fall back to progress across the section's
+        // full transit through the viewport (top entering at the bottom
+        // edge → bottom leaving the top edge), since the section isn't
+        // reserving any extra scroll height here.
+        const total = rect.height + window.innerHeight;
+        progress = clamp((window.innerHeight - rect.top) / total, 0, 1);
+      }
+      const value = MIN + (MAX - MIN) * progress;
+      setScrollIncome(Math.round(value / STEP) * STEP);
+    }
+
+    function onScroll() {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(update);
+    }
+
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isDragging) return;
+    function stop() {
+      setIsDragging(false);
+    }
+    window.addEventListener("pointerup", stop);
+    return () => window.removeEventListener("pointerup", stop);
+  }, [isDragging]);
+
   const band: Band = income <= BAND_BOUNDARY ? "top10" : "top1";
   const pct = ((income - MIN) / (MAX - MIN)) * 100;
 
@@ -119,12 +196,14 @@ export default function IncomePercentile() {
       className="border-l-4 border-halo/20 bg-ink pl-5 text-halo xl:border-l-0 xl:pl-24"
       style={{ scrollMarginTop: "80px" }}
     >
-      <div ref={sectionRef} className="container py-14 md:py-20 lg:py-24">
-        <span className="tabular mb-6 block text-[13px] font-medium text-iris xl:hidden">
-          03
-        </span>
+      <div ref={pinRef} style={{ ["--pin-distance" as string]: `${PIN_SCROLL_DISTANCE}px` }} className="lg:h-[calc(100vh+var(--pin-distance))]">
+        <div className="lg:sticky lg:top-20">
+          <div ref={sectionRef} className="container py-14 md:py-20 lg:py-24">
+            <span className="tabular mb-6 block text-[13px] font-medium text-iris xl:hidden">
+              03
+            </span>
 
-        <div className="grid gap-16 lg:grid-cols-[7fr_5fr] lg:gap-12">
+            <div className="grid gap-16 lg:grid-cols-[7fr_5fr] lg:gap-12">
           {/* ============ income column ============ */}
           <div>
             <h2
@@ -159,7 +238,16 @@ export default function IncomePercentile() {
                   max={MAX}
                   step={STEP}
                   value={income}
-                  onChange={(e) => setIncome(Number(e.target.value))}
+                  onChange={(e) => {
+                    setDragIncome(Number(e.target.value));
+                    setIsDragging(true);
+                  }}
+                  onPointerDown={() => setIsDragging(true)}
+                  onFocus={() => {
+                    setDragIncome(income);
+                    setIsDragging(true);
+                  }}
+                  onBlur={() => setIsDragging(false)}
                   aria-label="Annual income"
                   aria-valuetext={announcement}
                   style={
@@ -272,7 +360,9 @@ export default function IncomePercentile() {
               </div>
             </div>
           </div>
+          </div>
         </div>
+      </div>
       </div>
     </section>
   );
